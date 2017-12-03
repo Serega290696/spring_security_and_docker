@@ -1,50 +1,103 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
 
-	<groupId>com.beltser.learning</groupId>
-	<artifactId>learning</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
-	<packaging>jar</packaging>
+    <groupId>com.beltser.learning</groupId>
+    <artifactId>learning</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <packaging>war</packaging>
 
-	<name>learning</name>
-	<description>Demo project for Spring Boot</description>
+    <name>learning</name>
+    <description>Demo project for Spring Boot</description>
 
-	<parent>
-		<groupId>org.springframework.boot</groupId>
-		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>1.5.9.RELEASE</version>
-		<relativePath/> <!-- lookup parent from repository -->
-	</parent>
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>1.5.9.RELEASE</version>
+        <relativePath/> <!-- lookup parent from repository -->
+    </parent>
 
-	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-		<java.version>1.8</java.version>
-	</properties>
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <java.version>1.8</java.version>
+        <docker.image.prefix>docker_prefix</docker.image.prefix>
+    </properties>
 
-	<dependencies>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-web</artifactId>
-		</dependency>
+    <dependencies>
+        <!-- Spring MVC (web)-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+            <!-- Scope 'provided' to avoid conflicts between what spring boot and tomcat provided-->
+            <scope>provided</scope>
+        </dependency>
 
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-test</artifactId>
-			<scope>test</scope>
-		</dependency>
-	</dependencies>
+        <!-- Spring testing -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
 
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-maven-plugin</artifactId>
-			</plugin>
-		</plugins>
-	</build>
+        <!-- Spring actuator: health, audits, beans, and more.
+        You get new rest end point:
+        errors, environment, health, beans, info, metrics, trace, configprops, and dump. -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+    </dependencies>
 
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                        <configuration>
+                            <finalName>app</finalName>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>com.spotify</groupId>
+                <artifactId>docker-maven-plugin</artifactId>
+                <!--<version>VERSION GOES HERE</version>-->
+                <configuration>
+                    <imageName>${docker.image.prefix}/${project.artifactId}</imageName>
+                    <dockerDirectory>src/main/docker</dockerDirectory>
+                    <!--<baseImage>java</baseImage>-->
+                    <!--<entryPoint>["java", "-jar", "/${project.build.finalName}.jar"]</entryPoint>-->
+
+                    <forceTags>true</forceTags>
+                    <imageTags>
+                        <imageTag>latest</imageTag>
+                        <imageTag>${project.version}</imageTag>
+                    </imageTags>
+
+                    <serverId>docker-hub</serverId>
+                    <registryUrl>https://hub.docker.com/</registryUrl>
+
+                    <!-- copy the service's jar file from target into the root directory of the image -->
+                    <resources>
+                        <resource>
+                            <!-- Actually it is not 'target/', but 'target/docker/-->
+                            <targetPath>/</targetPath>
+                            <directory>${project.build.directory}</directory>
+                            <include>${project.build.finalName}.jar</include>
+                        </resource>
+                    </resources>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>
