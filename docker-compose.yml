@@ -2,18 +2,17 @@ version: "3"
 services:
   web:
     # replace username/repo:tag with your name and image details
-    build: .
-#    image: apps/learning
+    image: serega290696/redis-java-app
     deploy:
-      replicas: 2
+      replicas: 3
       restart_policy:
         condition: on-failure
       resources:
         limits:
-          cpus: "0.1"
-          memory: 50M
+          cpus: "0.3"
+          memory: 900M
     ports:
-      - "80:8080"
+      - "8090:8090"
     networks:
       - webnet
   visualizer:
@@ -27,5 +26,34 @@ services:
         constraints: [node.role == manager]
     networks:
       - webnet
+  zoo1:
+      image: zookeeper
+      restart: always
+      hostname: zoo1
+      ports:
+        - 2181:2181
+      environment:
+        ZOO_MY_ID: 1
+        ZOO_SERVERS: server.1=zoo1:2888:3888 server.2=zoo2:2888:3888 server.3=zoo3:2888:3888
+
+  zoo2:
+    image: zookeeper
+    restart: always
+    hostname: zoo2
+    ports:
+      - 2182:2181
+    environment:
+      ZOO_MY_ID: 2
+      ZOO_SERVERS: server.1=zoo1:2888:3888 server.2=zoo2:2888:3888 server.3=zoo3:2888:3888
+
+  zoo3:
+    image: zookeeper
+    restart: always
+    hostname: zoo3
+    ports:
+      - 2183:2181
+    environment:
+      ZOO_MY_ID: 3
+      ZOO_SERVERS: server.1=zoo1:2888:3888 server.2=zoo2:2888:3888 server.3=zoo3:2888:3888
 networks:
   webnet:

@@ -12,14 +12,14 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.net.URL;
 
+import static org.hamcrest.Matchers.isEmptyString;
+import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class HelloControllerIT {
-
-    private static final String CORRECT_RESPONSE = "<h1>Greetings from Spring Boot!</h1>";
 
     @LocalServerPort
     private int port;
@@ -38,6 +38,6 @@ public class HelloControllerIT {
     public void getHello() throws Exception {
         ResponseEntity<String> response = template.getForEntity(base.toString(),
                 String.class);
-        assertThat(response.getBody(), equalTo(CORRECT_RESPONSE));
+        assertThat(response.getBody(), not(isEmptyString()));
     }
 }

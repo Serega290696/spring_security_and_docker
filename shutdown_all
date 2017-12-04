@@ -1,0 +1,6 @@
+#!/bin/bash
+# docker stop $(docker images -f "dangling=true" -q)
+docker image rm $(docker images -f "dangling=true" -q)
+docker stop $(docker ps -q)
+docker service rm $(docker service ls -q)
+docker rm $(docker ps -qa)

@@ -11,6 +11,9 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.isEmptyString;
+import static org.hamcrest.Matchers.not;
+import static org.junit.Assert.assertThat;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -19,8 +22,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 public class LearningApplicationTests {
 
-	private static final String CORRECT_RESPONSE = "<h1>Greetings from Spring Boot!</h1>";
-
 	@Autowired
 	private MockMvc mvc;
 
@@ -28,7 +29,7 @@ public class LearningApplicationTests {
 	public void contextLoads() throws Exception {
 		mvc.perform(MockMvcRequestBuilders.get("/").accept(MediaType.APPLICATION_JSON))
 				.andExpect(status().isOk())
-				.andExpect(content().string(equalTo(CORRECT_RESPONSE)));
+				.andExpect(content().string(not(isEmptyString())));
 	}
 
 }

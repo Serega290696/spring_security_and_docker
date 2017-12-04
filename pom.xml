@@ -4,9 +4,9 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.beltser.learning</groupId>
-    <artifactId>learning</artifactId>
-    <version>1.0</version>
-    <packaging>war</packaging>
+    <artifactId>redis-java-app</artifactId>
+    <version>0.1-SNAPSHOT</version>
+    <packaging>jar</packaging>
 
     <name>learning</name>
     <description>Demo project for Spring Boot</description>
@@ -22,8 +22,6 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>1.8</java.version>
-        <docker.image.prefix>apps</docker.image.prefix>
-        <archive.name>app</archive.name>
     </properties>
 
     <dependencies>
@@ -62,45 +60,10 @@
                             <goal>repackage</goal>
                         </goals>
                         <configuration>
-                            <finalName>${archive.name}</finalName>
+                            <finalName>${project.artifactId}</finalName>
                         </configuration>
                     </execution>
                 </executions>
-            </plugin>
-
-            <!--Plugin for docker. Flags: -DpushImage, -DskipDockerPush-->
-            <plugin>
-                <groupId>com.spotify</groupId>
-                <artifactId>docker-maven-plugin</artifactId>
-                <!--<version>VERSION GOES HERE</version>-->
-                <configuration>
-                    <imageName>${docker.image.prefix}/${project.artifactId}</imageName>
-                    <dockerDirectory>src/main/docker</dockerDirectory>
-
-                    <!--<dockerHost>http://172.17.0.1</dockerHost>-->
-                    <!--<baseImage>java</baseImage>-->
-                    <!--<entryPoint>["java", "-jar", "/${project.build.finalName}.jar"]</entryPoint>-->
-
-                    <forceTags>true</forceTags>
-                    <imageTags>
-                        <imageTag>latest</imageTag>
-                        <imageTag>${project.version}</imageTag>
-                    </imageTags>
-
-                    <serverId>docker-hub</serverId>
-                    <registryUrl>https://hub.docker.com/</registryUrl>
-
-                    <!-- copy the service's jar file from target into the root directory of the image -->
-                    <resources>
-                        <resource>
-                            <!-- Actually it is not 'target/', but 'target/docker/-->
-                            <targetPath>/</targetPath>
-                            <directory>${project.build.directory}</directory>
-                            <include>${archive.name}.${project.packaging}</include>
-                            <!--<include>${project.build.finalName}.war</include>-->
-                        </resource>
-                    </resources>
-                </configuration>
             </plugin>
         </plugins>
     </build>

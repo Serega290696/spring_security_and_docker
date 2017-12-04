@@ -2,18 +2,14 @@ FROM tomcat:9
 MAINTAINER Beltser Sergey <beltser.sergey@gmail.com>
 
 
-#WORKDIR app/
+# WORKDIR app/
 # VOLUME /tmp:tmp2
-# ADD app.war app.war
+# ADD app.jar app.jar
 
-#VOLUME /tmp
-COPY target/app.war /usr/local/tomcat/webapps/app.war
-# COPY learning-1.0.war /usr/local/tomcat/webapps/app.war
-RUN sh -c "touch /usr/local/tomcat/webapps/app.war"
+# VOLUME /tmp
 
+COPY target/redis-java-app.jar /usr/local/tomcat/webapps/app.jar
+RUN sh -c "touch /usr/local/tomcat/webapps/app.jar"
 
-# RUN export KEYKEY="value_value"
-# ENV ssecret="${KEYKEY}"
-# RUN echo "$ssecret"
-# EXPOSE 8090
-ENTRYPOINT ["sh", "-c", "java -Djava.security.egd=file:/dev/./urandom -jar /usr/local/tomcat/webapps/app.war"]
+EXPOSE 80
+CMD ["sh", "-c", "java -Djava.security.egd=file:/dev/./urandom -jar /usr/local/tomcat/webapps/app.jar"]
