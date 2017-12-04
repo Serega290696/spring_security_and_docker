@@ -5,7 +5,7 @@
 
     <groupId>com.beltser.learning</groupId>
     <artifactId>learning</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>1.0</version>
     <packaging>war</packaging>
 
     <name>learning</name>
@@ -22,7 +22,8 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>1.8</java.version>
-        <docker.image.prefix>docker_prefix</docker.image.prefix>
+        <docker.image.prefix>apps</docker.image.prefix>
+        <archive.name>app</archive.name>
     </properties>
 
     <dependencies>
@@ -61,12 +62,13 @@
                             <goal>repackage</goal>
                         </goals>
                         <configuration>
-                            <finalName>app</finalName>
+                            <finalName>${archive.name}</finalName>
                         </configuration>
                     </execution>
                 </executions>
             </plugin>
 
+            <!--Plugin for docker. Flags: -DpushImage, -DskipDockerPush-->
             <plugin>
                 <groupId>com.spotify</groupId>
                 <artifactId>docker-maven-plugin</artifactId>
@@ -74,6 +76,8 @@
                 <configuration>
                     <imageName>${docker.image.prefix}/${project.artifactId}</imageName>
                     <dockerDirectory>src/main/docker</dockerDirectory>
+
+                    <!--<dockerHost>http://172.17.0.1</dockerHost>-->
                     <!--<baseImage>java</baseImage>-->
                     <!--<entryPoint>["java", "-jar", "/${project.build.finalName}.jar"]</entryPoint>-->
 
@@ -92,7 +96,8 @@
                             <!-- Actually it is not 'target/', but 'target/docker/-->
                             <targetPath>/</targetPath>
                             <directory>${project.build.directory}</directory>
-                            <include>${project.build.finalName}.jar</include>
+                            <include>${archive.name}.${project.packaging}</include>
+                            <!--<include>${project.build.finalName}.war</include>-->
                         </resource>
                     </resources>
                 </configuration>
