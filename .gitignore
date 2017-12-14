@@ -24,4 +24,4 @@ nbdist/
 .nb-gradle/
 
 ### Custom ###
-deploy_swarm.sh
+# deploy_swarm.sh
